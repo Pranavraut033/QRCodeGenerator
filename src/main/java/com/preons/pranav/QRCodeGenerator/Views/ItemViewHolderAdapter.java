@@ -2,7 +2,6 @@ package com.preons.pranav.QRCodeGenerator.Views;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import pranav.utilities.Animations;
 
 import static com.preons.pranav.QRCodeGenerator.utils.c.DI;
-import static com.preons.pranav.QRCodeGenerator.utils.c.TAG;
 
 /**
  * Created on 20-06-2017 at 11:46 by Pranav Raut.
@@ -27,7 +25,7 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
 
     private static final long SAD = 0x4b;
     private static final int B = 0x550091EA;
-    private int select = -1;
+    //    private int select = -1;
     private boolean multiModeOn;
     private boolean multiEnabled = true;
     private ArrayList<Item> items;
@@ -58,21 +56,20 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
         view.setContentDescription(String.valueOf(position));
         view.setOnClickListener(this);
         view.setOnLongClickListener(this);
-        switch (select) {
+        boolean b = isSelected(view);
+      /*  switch (select) {
             case 0:
-                if (!view.isSelected()) {
-                    Log.d(TAG, "onBindViewHolder: " + position);
+                if (!b) {
                     onClick(view);
                 }
                 break;
             case 1:
-                if (view.isSelected()) {
-                    Log.d(TAG, "onBindViewHolder: " + position);
+                if (b) {
                     onClick(view);
                 }
                 break;
         }
-        if (position + 1 == items.size()) select = -1;
+        if (position + 1 == items.size()) select = -1;*/
 
     }
 
@@ -96,7 +93,6 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
         float f = Integer.parseInt(v.getContentDescription().toString());
         if (isSelected) checkItems.add(f);
         else checkItems.remove(f);
-        v.setSelected(isSelected);
     }
 
     public void reset() {
@@ -117,7 +113,7 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
     }
 
     public void selectAll(boolean b) {
-        select = b ? 0 : 1;
+//        select = b ? 0 : 1;
         notifyDataSetChanged();
     }
 
@@ -149,25 +145,31 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
 
     @Override
     public void onViewAttachedToWindow(ItemViewHolder holder) {
-        //if (select == -1)
-        if (holder.getParent().isSelected()) quickSelect(holder.getParent());
+        float f = Float.parseFloat(holder.getParent().getContentDescription().toString());
+        if (checkItems.contains(f)) quickSelect(holder.getParent());
         else quickDeselect(holder.getParent());
-        //Log.d(TAG, "onViewAttachedToWindow: " + holder.getParent().getContentDescription());
         super.onViewAttachedToWindow(holder);
+    }
+
+    private boolean isSelected(View v) {
+        float f = Float.parseFloat(v.getContentDescription().toString());
+        return checkItems.contains(f);
     }
 
     @Override
     public void onClick(View v) {
-        ItemViewHolder holder = new ItemViewHolder(v);
         if (multiModeOn) {
-            if (select != -1) {
-                if (!v.isSelected()) animateSelect(v);
+            boolean b = isSelected(v);
+
+//            if (select != -1) {
+
+            if (!b) animateSelect(v);
                 else animateDeselect(v);
-            } else {
-                if (!v.isSelected()) quickSelect(v);
+           /* } else {
+                if (!b) quickSelect(v);
                 else quickDeselect(v);
-                alterVal(v, !v.isSelected());
-            }
+                alterVal(v, !b);
+            }*/
             multiModeOn = getSelectionCount() != 0;
             if (click != null) click.onMultiSelect(getSelectionCount(), multiModeOn);
         } else if (click != null)
@@ -178,10 +180,9 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
     public boolean onLongClick(View v) {
         if (!multiEnabled)
             return false;
-        ItemViewHolder holder = new ItemViewHolder(v);
         int i = Integer.parseInt(v.getContentDescription().toString());
         multiModeOn = true;
-        if (!v.isSelected())
+        if (!isSelected(v))
             animateSelect(v);
         if (click != null) click.onMultiSelect(getSelectionCount(), true);
         return true;

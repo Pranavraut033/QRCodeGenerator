@@ -8,6 +8,8 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -33,6 +35,7 @@ import com.preons.pranav.QRCodeGenerator.Views.ItemViewHolderAdapter;
 import com.preons.pranav.QRCodeGenerator.utils.DB;
 import com.preons.pranav.QRCodeGenerator.utils.InitNav;
 import com.preons.pranav.QRCodeGenerator.utils.Item;
+import com.preons.pranav.QRCodeGenerator.utils.UpdateDialog;
 import com.preons.pranav.QRCodeGenerator.utils.Utils;
 
 import java.util.ArrayList;
@@ -47,6 +50,7 @@ import pranav.views.FloatingMenu.FloatingMenu;
 import static com.preons.pranav.QRCodeGenerator.utils.Utils.initRec;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DCI;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DI;
+import static com.preons.pranav.QRCodeGenerator.utils.c.DSP;
 import static com.preons.pranav.QRCodeGenerator.utils.c.setFilter;
 import static pranav.utilities.Animations.ANIMATION_TIME;
 import static pranav.utilities.Animations.AnimatingParameter.ANIMATE_WIDTH;
@@ -130,12 +134,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     };
     private Animations.AnimatingParameter parameter;
     private ItemViewHolderAdapter adapter = new ItemViewHolderAdapter(null);
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.h);
         init();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            int version = pInfo.versionCode;
+            if (sharedPreferences.getInt("version", version) != version) {
+                Intent intent = new Intent(getApplicationContext(), UpdateDialog.class);
+                intent.putExtra("type", "update");
+                startActivity(intent);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -300,9 +322,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         appBarLayout = findViewById(R.id.app_bar_layout);
         floatingMenu = findViewById(R.id.menu);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(com.preons.pranav.QRCodeGenerator.utils.c.DSP, 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.apply();
+        sharedPreferences = getSharedPreferences(DSP, 0);
         nav = new InitNav(c, toolbar, sharedPreferences);
 
         ImageView ref_iv = findViewById(R.id.back_key);

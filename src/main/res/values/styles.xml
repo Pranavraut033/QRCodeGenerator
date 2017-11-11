@@ -84,6 +84,14 @@
     <style name="d_label.title" parent="d_label">
         <item name="android:textSize">18sp</item>
     </style>
+
+    <style name="AppTheme.MaterialDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:windowBackground">@color/white</item>
+    </style>
     <!--
     <style name="toolbar_button">
         <item name="android:layout_width">@dimen/actionBarSize</item>
