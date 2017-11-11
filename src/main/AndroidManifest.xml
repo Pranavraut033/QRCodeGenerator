@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.preons.pranav.QRCodeGenerator">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="com.preons.pranav.QRCodeGenerator.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar3">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.preons.pranav.QRCodeGenerator.SplashScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/AppTheme.Fullscreen" />
+        <activity
+            android:name="com.preons.pranav.QRCodeGenerator.EditActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="com.preons.pranav.QRCodeGenerator.ChoiceActivity"
+            tools:targetApi="jelly_bean">
+            <meta-data
+                android:name="com.google.android.gms.vision.DEPENDENCIES"
+                android:value="barcode" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.preons.pranav.QRCodeGenerator.ChoiceActivity" />
+        </activity>
+        <activity
+            android:name="com.preons.pranav.QRCodeGenerator.ScannerActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/AppTheme.Fullscreen2" />
+        <activity android:name="com.preons.pranav.QRCodeGenerator.ExtraActivity" />
+        <activity
+            android:name="com.preons.pranav.QRCodeGenerator.ChoiceActivity"
+            android:label="@string/cct"
+            android:parentActivityName="com.preons.pranav.QRCodeGenerator.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar.Trans"
+            tools:targetApi="jelly_bean">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.preons.pranav.QRCodeGenerator.HomeActivity" />
+        </activity>
+        <activity android:name="com.preons.pranav.QRCodeGenerator.PreviewActivity" />
+    </application>
+
+</manifest>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/raw"
+    style="@style/raw">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/email"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_email"
+            android:drawableStart="@drawable/ic_email"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
+            android:textStyle="bold"
+            app:hint="Email *"
+            app:limit="40" />
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/sub"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_subject"
+            android:drawableStart="@drawable/ic_subject"
+            android:inputType="text"
+            android:singleLine="true"
+            app:hint="Subject"
+            app:limit="100" />
+
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/msg"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_msg"
+            android:drawableStart="@drawable/ic_msg"
+            android:inputType="text"
+            app:hint="Message"
+            app:limit="250" />
+
+        <Button
+            android:id="@+id/done"
+            style="@style/dBtn" />
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

@@ -1,0 +1,174 @@
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        ArcMotion arcMotion = new ArcMotion();
+        transition = new ChangeBounds();
+        arcMotion.setMaximumAngle(45);
+        arcMotion.setMinimumHorizontalAngle(90);
+        arcMotion.setMinimumVerticalAngle(0);
+        transition.addTarget(mainBtn);
+        transition.setPathMotion(arcMotion);
+    }
+
+
+    c   cardView.setVisibility(VISIBLE);
+        float v = (float) Math.hypot(cardView.getWidth(), cardView.getHeight());
+        mainBtn.animate().translationX(i).translationY(i)
+                .scaleX(2).scaleY(2)
+                .setStartDelay(0)
+                .alpha(0).setDuration(ANIMATION_TIME / 2);
+        Animator anim = ViewAnimationUtils.createCircularReveal(cardView,
+                (int) (cardView.getWidth() - i), (int) (cardView.getHeight() - i), 0, v);
+        anim.setDuration(ANIMATION_TIME / 2);
+        Animator animator = ObjectAnimator.ofFloat(this, "trans", 0, -i);
+        animator.setDuration(ANIMATION_TIME / 2).setStartDelay(ANIMATION_TIME / 2);
+        animator.start();
+        anim.start();
+    }
+}
+
+private void setTrans(float f) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) cardView.setCardElevation(f);
+}
+            mainContainer.setAlpha(0);
+            final int cX = cardView.getWidth() / 2;
+            final int cY = cardView.getHeight() / 2;
+            mainBtn.animate().scaleX(1.5f).scaleY(1.5f).withLayer()
+                    .setInterpolator(DI).setDuration(ANIMATION_TIME / 4).start();
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mainBtn, "x", "y",
+                    arcMotion.getPath(mainBtn.getX(), mainBtn.getY(),
+                            cardView.getX() + cX - mainBtn.getWidth() / 2,
+                            cardView.getY() + cY - mainBtn.getHeight() / 2))
+                    .setDuration(ANIMATION_TIME / 4);
+            animator.setInterpolator(DI);
+            animator.start();
+            new Handler().postDelayed(new Runnable() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void run() {
+                    cardView.setVisibility(VISIBLE);
+                    float v = (float) Math.hypot(cX, cY);
+                    float c = res.getDimen(R.dimen.pad32dp);//(float) Math.hypot(mainBtn.getWidth() / 2, mainBtn.getWidth() / 2);
+                    Animator anim = ViewAnimationUtils.createCircularReveal(
+                            cardView, cX, cY, c, v);
+                    anim.setDuration(ANIMATION_TIME / 4);
+                    anim.start();
+                    mainBtn.animate().alpha(0).setDuration(ANIMATION_TIME / 4);
+
+                }
+            }, animator.getDuration());
+            long t = animator.getDuration() + ANIMATION_TIME / 4;
+            mainContainer.animate().alpha(1).setDuration(ANIMATION_TIME / 4).setInterpolator(DI).setStartDelay(t);
+            Animations.AnimatingColor color = new Animations.AnimatingColor(details.getMainBtnBaseColor(), 0xffffffff);
+            color.setColorChangeListener(new Animations.AnimatingColor.ColorChangeListener() {
+                @Override
+                public void onColorChanged(int color) {
+                    cardView.setCardBackgroundColor(color);
+                }
+            });
+            color.setDuration(ANIMATION_TIME / 4);
+            color.startDelayed(t);
+
+    view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (multiModeOn) {
+                    boolean g = b[position];
+                    ObjectAnimator animator;
+                    animatingColor.setColorChangeListener(new Animations.AnimatingColor.ColorChangeListener() {
+                        @Override
+                        public void onColorChanged(int color) {
+                            finalView.setBackgroundColor(color);
+                        }
+                    });
+                    if (g) {
+                        numSelect--;
+                        animator = ObjectAnimator.ofFloat(cardView, "CardElevation", 0, E).setDuration(SAD);
+                        finalView.animate().scaleY(1).scaleX(1).setDuration(SAD)
+                                .setInterpolator(I).start();
+                        cardView.animate().scaleY(1).scaleX(1).setDuration(SAD)
+                                .setInterpolator(I).start();
+                        animatingColor.setColors(B, 0).start();
+                    } else {
+                        numSelect++;
+                        animator = ObjectAnimator.ofFloat(cardView, "CardElevation", E, 0).setDuration(SAD);
+                        cardView.animate().scaleY(.95f).scaleX(.95f).setDuration(SAD)
+                                .setInterpolator(I).start();
+                        animatingColor.setColors(0, B).start();
+                    }
+                    animator.setInterpolator(I);
+                    animator.start();
+                    b[position] = !g;
+                    multiModeOn = numSelect != 0;
+                }
+            }
+        });
+        view.setContentDescription(position + " Hi");
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!multiModeOn)
+                    numSelect++;
+                multiModeOn = true;
+                animatingColor.setColorChangeListener(new Animations.AnimatingColor.ColorChangeListener() {
+                    @Override
+                    public void onColorChanged(int color) {
+                        finalView.setBackgroundColor(color);
+                    }
+                });
+                ObjectAnimator animator = ObjectAnimator.ofFloat(cardView, "CardElevation", E, 0).setDuration(SAD);
+                b[position] = true;
+                cardView.animate().scaleY(.95f).scaleX(.95f).setDuration(SAD)
+                        .setInterpolator(I).start();
+                animator.setInterpolator(I);
+                animator.start();
+                animatingColor.setColors(0, B).start();
+                return true;
+            }
+        });
+
+    if (toolbar.getSolidColor() != primaryColor) {
+        toolbar.setBackgroundColor(primaryColor);
+        getWindow().setStatusBarColor(primaryColorDark);
+        toolbar.setTitleTextColor(-1);
+    }
+    toolbar.setBackgroundColor((Integer) evaluator.evaluate(i / (multiplier * t), -1, primaryColor));
+    toolbar.setTitleTextColor((Integer) evaluator.evaluate(i / (multiplier * t), 0xff000000, -1));
+    getWindow().setStatusBarColor((Integer) evaluator.evaluate(i / (multiplier * t), 0x55000000,primaryColorDark));
+
+        public static void animateVisS(View view) {
+        new animate(view, 0, view.getHeight());
+    }
+
+    public static void animateVisH(View view) {
+        new animate(view, view.getHeight(), 0);
+    }
+        public animate(final View v, int initialHeight, int targetHeight) {
+            ValueAnimator animator = ObjectAnimator.ofObject(new IntEvaluator(), initialHeight, targetHeight)
+                    .setDuration((long) (20 * (Math.abs(targetHeight - initialHeight) /
+                            v.getContext().getResources().getDisplayMetrics().density)));
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    v.getLayoutParams().height = (int) animation.getAnimatedValue();
+                    v.requestLayout();
+                }
+            });
+            animator.setInterpolator(DI);
+            animator.start();
+        }
+
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.aztec, R.string.aztec_dis, 0));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.codabar, R.string.codobar_dis, 1));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.code_93, R.string.code_93_dis, 3));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.code_39, R.string.code_39_dis, 2));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.data_matrix, R.string.data_matrix_dis, 4));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.ean, R.string.ean_dis, 6));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.maxicode, R.string.maxicode_dis, 8));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.itf, R.string.itf_dis, 7));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.pdf417, R.string.pdf417_dis, 9));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.qr_code, R.string.qr_code_dis, 10));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.rss, R.string.rss_dis, 11));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.rss_expanded, R.string.rss_expanded_dis, 12));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.upc, R.string.upc_dis, 13));
+        choices.add(c.g(R.drawable.action_mode_grey, R.string.extension, R.string.extension_dis, 15));
+        choices.add(new Choice(new ColorDrawable(0xff332434), "EAN_8", "dis", 5));
+        choices.add(new Choice(new ColorDrawable(0xff364790), "UPC_E", "dis", 14));

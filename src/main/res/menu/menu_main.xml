@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.preons.pranav.QRCodeGenerator.EditActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:text="@string/action_settings"
+        android:title="@string/title"
+        app:showAsAction="never" />
+</menu>

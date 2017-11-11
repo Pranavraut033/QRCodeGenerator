@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/raw"
+    style="@style/raw"
+    tools:ignore="Deprecated">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/name"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_person"
+            android:drawableStart="@drawable/ic_person"
+            android:inputType="textPersonName"
+            android:singleLine="true"
+            android:textStyle="bold"
+            app:hint="Full Name *"
+            app:limit="25" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <pranav.views.TextField.TextField
+                    android:id="@+id/num0"
+                    style="@style/dText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textStyle="bold"
+                    app:hint="Primary Number *" />
+
+                <ImageView
+                    android:id="@+id/add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/dPad"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/add"
+                    android:padding="@dimen/pad2dp"
+                    android:src="@drawable/ic_add"
+                    android:tint="#424242"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <pranav.views.TextField.TextField
+                android:id="@+id/num1"
+                style="@style/dText"
+                android:singleLine="true"
+                android:visibility="gone"
+                app:hint="Secondary Number" />
+
+            <pranav.views.TextField.TextField
+                android:id="@+id/num2"
+                style="@style/dText"
+                android:singleLine="true"
+                android:visibility="gone"
+                app:hint="Tertiary Number" />
+        </LinearLayout>
+
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/url"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_web"
+            android:drawableStart="@drawable/ic_web"
+            android:inputType="textWebEditText"
+            android:singleLine="true"
+            app:hint="Website"
+            app:limit="50" />
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/email"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_email"
+            android:drawableStart="@drawable/ic_email"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
+            app:hint="Email"
+            app:limit="40" />
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/address"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_address"
+            android:drawableStart="@drawable/ic_address"
+            android:inputType="textPostalAddress"
+            app:hint="Address"
+            app:limit="250" />
+
+        <pranav.views.TextField.TextField
+            android:id="@+id/note"
+            style="@style/dText"
+            android:drawableLeft="@drawable/ic_note"
+            android:drawableStart="@drawable/ic_note"
+            android:inputType="text"
+            app:hint="Note"
+            app:limit="250" />
+
+        <Button
+            android:id="@+id/done"
+            style="@style/dBtn" />
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

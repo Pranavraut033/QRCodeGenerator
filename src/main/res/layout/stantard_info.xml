@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ededed"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:ignore="HardcodedText">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cardview_light_background"
+        android:padding="@dimen/dPad">
+
+        <FrameLayout>
+
+            <ImageView
+                android:id="@+id/profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha=".5"
+                android:contentDescription="@string/pan_card_no" />
+
+            <ProgressBar
+                android:id="@+id/progress_up"
+                style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/dPad"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="@string/name" />
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_weight="1"
+                android:inputType="textCapWords"
+                android:maxLength="50"
+                android:padding="@dimen/dPad" />
+        </TableRow>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="@string/address" />
+
+            <EditText
+                android:id="@+id/add"
+                android:layout_weight="1"
+                android:inputType="textPostalAddress"
+                android:maxLength="150"
+                android:padding="@dimen/dPad" />
+        </TableRow>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="@string/email" />
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_weight="1"
+                android:inputType="textEmailAddress"
+                android:maxLength="50"
+                android:padding="@dimen/dPad" />
+        </TableRow>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="@string/phone_no" />
+
+            <EditText
+                android:id="@+id/mob"
+                android:layout_weight="1"
+                android:inputType="phone"
+                android:maxLength="16"
+                android:padding="@dimen/dPad" />
+        </TableRow>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="@string/gender" />
+
+            <RadioGroup
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/male"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/male" />
+
+                <RadioButton
+                    android:id="@+id/female"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/female" />
+            </RadioGroup>
+        </TableRow>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="@string/aadhaar_no" />
+
+            <EditText
+                android:id="@+id/add_no"
+                android:layout_weight="1"
+                android:inputType="number|phone"
+                android:maxLength="14"
+                android:padding="@dimen/dPad" />
+        </TableRow>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="@string/pan_card_no" />
+
+            <EditText
+                android:id="@+id/pan_no"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:maxLength="10"
+                android:padding="@dimen/dPad"
+                android:textAllCaps="true" />
+        </TableRow>
+
+        <TableRow android:paddingBottom="@dimen/dPad">
+
+            <TextView
+                style="@style/d_label"
+                android:text="Bank\nAccount No:" />
+
+            <EditText
+                android:id="@+id/bank_no"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:padding="@dimen/dPad" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/d_label"
+                android:text="Current\nStatus:" />
+
+            <Spinner
+                android:id="@+id/stat"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:entries="@array/Current_Status"
+                android:padding="@dimen/dPad" />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

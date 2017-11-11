@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/more"
+        android:menuCategory="system"
+        android:title="@string/communicate">
+
+        <menu>
+            <item
+                android:icon="@drawable/ic_rate"
+                android:id="@+id/rate"
+                android:title="@string/rate" />
+            <item
+                android:id="@+id/share"
+                android:icon="@drawable/ic_share"
+                android:title="@string/share" />
+            <item
+                android:id="@+id/support"
+                android:title="@string/support" />
+        </menu>
+
+    </item>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/create"
+            android:icon="@drawable/ic_create_white"
+            android:title="@string/create" />
+        <item
+            android:id="@+id/scan"
+            android:icon="@drawable/ic_scan_info"
+            android:title="@string/scan" />
+    </group>
+</menu>

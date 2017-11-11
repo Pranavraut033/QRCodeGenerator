@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#FFF50057</color>
+    <color name="white">#ffffff</color>
+    <color name="dBackground">#ffeeeeee</color>
+    <color name="grey">#bdbdbd</color>
+    <color name="transparent">#00000000</color>
+    <color name="fab_grey">#90bdbdbd</color>
+    <color name="grey2">#90424242</color>
+    <color name="icon_grey">#90000000</color>
+    <color name="toolbar_button">#aaffffff</color>
+    <color name="black">#ff000000</color>
+</resources>

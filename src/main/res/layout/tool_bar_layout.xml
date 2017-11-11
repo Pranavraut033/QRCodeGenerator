@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad4dp"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/back_color"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="match_parent"
+        android:background="@drawable/fore_back"
+        android:contentDescription="@string/back_color"
+        android:padding="@dimen/pad10dp" />
+
+    <ImageButton
+        android:id="@+id/fore_color"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="match_parent"
+        android:background="@drawable/back_back"
+        android:contentDescription="@string/fore_color"
+        android:padding="@dimen/pad10dp" />
+
+</LinearLayout>
