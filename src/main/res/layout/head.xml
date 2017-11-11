@@ -11,14 +11,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="@dimen/dPad">
+        android:padding="@dimen/pad6dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@mipmap/ic_launcher" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,14 +50,15 @@
 
     <ImageView
         android:id="@+id/settings"
-        android:layout_width="@dimen/pad40dp"
-        android:onClick="onClick"
-        android:layout_height="@dimen/pad40dp"
+        android:layout_width="@dimen/pad36dp"
+        android:layout_height="@dimen/pad36dp"
         android:layout_marginEnd="@dimen/dPad"
         android:layout_marginRight="@dimen/dPad"
         android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/action_settings"
+        android:onClick="onClick"
         android:padding="@dimen/dPad"
-        android:src="@drawable/ic_settings" />
+        android:src="@drawable/ic_settings"
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -58,28 +58,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private int iniTop, i = -1, j = 0x90000000, k = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 0xCCFFFFFF : 0x90000000,
             primaryColor, primaryColorDark;
     private float lastH = 0, f = 0, H;
-    private Drawable search;
-    private ArrayList<Item> restore = new ArrayList<>();
-    private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<Item> data = new ArrayList<>();
-
-    private Context c;
-    private Menu menu;
-    private Snackbar snackbar;
-    private Toolbar toolbar;
-    private SearchView searchView;
-    private AppBarLayout appBarLayout;
-    private RecyclerView recyclerView;
-    private ValueAnimator valueAnimator = ObjectAnimator.ofObject(new FloatEvaluator());
-
-    private Utilities.Resources res;
-    private InitNav nav;
-    private DB.I handler;
-    private FloatingMenu floatingMenu;
-    private Animations.AnimateStatusBar statusBar;
-    private Animations.AnimatingParameter parameter;
-    private ItemViewHolderAdapter adapter = new ItemViewHolderAdapter(null);
-
     Buffer<Float> floatBuffer = new Buffer<Float>() {
         @Override
         public void execute(Float f) {
@@ -93,6 +71,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     .evaluate(f, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 0xCCFFFFFF : 0x90000000, primaryColorDark);
         }
     }.setDelaySpan(25);
+    private Drawable search;
+    private ArrayList<Item> restore = new ArrayList<>();
+    private ArrayList<Item> items = new ArrayList<>();
+    private ArrayList<Item> data = new ArrayList<>();
+    private Context c;
+    private Menu menu;
+    private Snackbar snackbar;
+    private Toolbar toolbar;
+    private SearchView searchView;
+    private AppBarLayout appBarLayout;
+    private RecyclerView recyclerView;
+    private ValueAnimator valueAnimator = ObjectAnimator.ofObject(new FloatEvaluator());
+    private Utilities.Resources res;
+    private InitNav nav;
+    private DB.I handler;
+    private FloatingMenu floatingMenu;
+    private Animations.AnimateStatusBar statusBar;
     Task<Float> apply = f -> {
         if (f == 1) {
             HomeActivity.this.recyclerView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
@@ -133,6 +128,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             statusBar.setColor(k);
         }
     };
+    private Animations.AnimatingParameter parameter;
+    private ItemViewHolderAdapter adapter = new ItemViewHolderAdapter(null);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -455,7 +452,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void refresh() {
-        //recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 }
