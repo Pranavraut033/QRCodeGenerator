@@ -16,11 +16,15 @@ import static com.preons.pranav.QRCodeGenerator.utils.DB.I.getName;
  */
 
 public class Item implements Comparator<Item> {
-    private final String title, typeS, disp, date, img_ref;
+    private final String title;
+    private final String typeS;
+    private final String disp;
+    private final String date;
     private final boolean isProtected;
     private final long dateL;
     private final int type;
     private final int index;
+    private String img_ref;
     private int subtype;
     private String data;
     private int extra_ref;
@@ -40,18 +44,22 @@ public class Item implements Comparator<Item> {
         this.data = data;
         this.extra_ref = extra_ref;
         this.password = password;
-        this.img_ref = getName(date, type, isProtected);
+        this.img_ref = getName(date, type, isProtected) + title.substring(0, 3);
     }
 
     @NonNull
     private String getDate(long date) {
         StringBuilder builder = new StringBuilder();
-        while (date > 9999) {
+        while (date > 999999) {
             builder.append(date % 100).append("/");
             date /= 100;
         }
         builder = new StringBuilder(builder.substring(0, builder.length() - 1));
         builder.append('\n');
+        while (date > 9999) {
+            builder.append(date % 100).append(":");
+            date /= 100;
+        }
         while (date > 99) {
             builder.append(date % 100).append(":");
             date /= 100;
@@ -88,7 +96,7 @@ public class Item implements Comparator<Item> {
         return typeS;
     }
 
-    long getDateL() {
+    public long getDateL() {
         return dateL;
     }
 
@@ -98,6 +106,10 @@ public class Item implements Comparator<Item> {
 
     public String getImg_ref() {
         return img_ref;
+    }
+
+    public void setImg_ref(String img_ref) {
+        this.img_ref = img_ref;
     }
 
     public int getSubtype() {
@@ -138,4 +150,5 @@ public class Item implements Comparator<Item> {
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
 }

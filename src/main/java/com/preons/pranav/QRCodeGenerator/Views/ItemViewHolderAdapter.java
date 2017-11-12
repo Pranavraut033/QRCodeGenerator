@@ -25,7 +25,6 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
 
     private static final long SAD = 0x4b;
     private static final int B = 0x550091EA;
-    //    private int select = -1;
     private boolean multiModeOn;
     private boolean multiEnabled = true;
     private ArrayList<Item> items;
@@ -56,21 +55,6 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
         view.setContentDescription(String.valueOf(position));
         view.setOnClickListener(this);
         view.setOnLongClickListener(this);
-        boolean b = isSelected(view);
-      /*  switch (select) {
-            case 0:
-                if (!b) {
-                    onClick(view);
-                }
-                break;
-            case 1:
-                if (b) {
-                    onClick(view);
-                }
-                break;
-        }
-        if (position + 1 == items.size()) select = -1;*/
-
     }
 
     private void animateSelect(View v) {
@@ -112,9 +96,11 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
         v.setScaleX(1);
     }
 
-    public void selectAll(boolean b) {
-//        select = b ? 0 : 1;
+    public void selectMode(boolean a) {
+        if (a) for (int j = 0; j < items.size(); j++) checkItems.add((float) j);
+        else checkItems.clear();
         notifyDataSetChanged();
+        if (click != null) click.onMultiSelect(getSelectionCount(), true);
     }
 
     @Override
@@ -160,16 +146,8 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
     public void onClick(View v) {
         if (multiModeOn) {
             boolean b = isSelected(v);
-
-//            if (select != -1) {
-
             if (!b) animateSelect(v);
                 else animateDeselect(v);
-           /* } else {
-                if (!b) quickSelect(v);
-                else quickDeselect(v);
-                alterVal(v, !b);
-            }*/
             multiModeOn = getSelectionCount() != 0;
             if (click != null) click.onMultiSelect(getSelectionCount(), multiModeOn);
         } else if (click != null)
@@ -194,6 +172,10 @@ public class ItemViewHolderAdapter extends RecyclerView.Adapter<ItemViewHolder> 
 
     public void setMultiEnabled(boolean multiEnabled) {
         this.multiEnabled = multiEnabled;
+    }
+
+    public void clearSelection() {
+        checkItems.clear();
     }
 
     public interface OnClick {

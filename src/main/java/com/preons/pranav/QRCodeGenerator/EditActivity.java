@@ -3,9 +3,7 @@ package com.preons.pranav.QRCodeGenerator;
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -48,7 +45,6 @@ import com.preons.pranav.QRCodeGenerator.utils.DB;
 import com.preons.pranav.QRCodeGenerator.utils.Item;
 import com.preons.pranav.QRCodeGenerator.utils.StringHandler;
 import com.preons.pranav.QRCodeGenerator.utils.c;
-import pranav.views.TextField.TextField;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -59,6 +55,7 @@ import java.util.Date;
 
 import pranav.utilities.Animations;
 import pranav.utilities.Utilities;
+import pranav.views.TextField.TextField;
 
 import static com.preons.pranav.QRCodeGenerator.ExtraActivity.INFOS;
 import static com.preons.pranav.QRCodeGenerator.utils.Choice.getChoice;
@@ -77,33 +74,28 @@ public class EditActivity extends AppCompatActivity {
 
     private boolean collapsed = true, b;
     private int back = -1, fore = 0xff000000, type;
-    private String pass;
 
     private Button button, std;
     private Menu menu;
     private Toolbar toolbar;
     private ToggleButton lock;
-    private TextField info, passT, desp;
+    private TextField info, passT, desc;
 
     @Nullable
     private ValueAnimator animator;
     private Tools tools;
     private Code<TextInputEditText> code;
 
-    private Drawable d;
-    private Activity a;
     private Bundle tlBun = new Bundle();
     private StringHandler stringHandler;
     private ViewGroup parent;
     private Data data;
-    private AlertDialog.Builder builder;
-    Utilities.Resources res;
+    private Utilities.Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-        res = new Utilities.Resources(this);
         init();
     }
 
@@ -113,7 +105,7 @@ public class EditActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
         initProperties();
-        checkpPermission();
+        checkPermission();
     }
 
     @Override
@@ -127,7 +119,7 @@ public class EditActivity extends AppCompatActivity {
         info.setLimit(code.getLimit());
     }
 
-    private void checkpPermission() {
+    private void checkPermission() {
         String[] PERMISSIONS = new String[0];
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
             PERMISSIONS = new String[]{
@@ -139,13 +131,13 @@ public class EditActivity extends AppCompatActivity {
 
     private void initProperties() {
         //todo animate
-        lock.setOnCheckedChangeListener((buttonView, isChecked) -> passT.setEnabled(b = isChecked));
+        lock.setOnCheckedChangeListener((buttonView, isChecked) -> passT.setVisibility((b = isChecked) ? View.VISIBLE : View.GONE));
 
         std.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), ExtraActivity.class);
             intent.putExtra(ExtraActivity.EXTRA_CONTACT, true);
             ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation(a, std, "std");
+                    makeSceneTransitionAnimation(this, std, "std");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                 startActivityForResult(intent, c.e.INFO, options.toBundle());
             else
@@ -153,23 +145,14 @@ public class EditActivity extends AppCompatActivity {
         });
 
         button.setOnClickListener(v -> generate(stringHandler.encryptString(info.getContentText(),
-                pass = (lock.isChecked() ? passT.getContentText() : ""))));
-        builder = new AlertDialog.Builder(this);
-        // TODO: 29-08-2017 change icon
-        builder.setIcon(android.R.drawable.ic_dialog_alert);
-        builder.setTitle("Cancel create code?");
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).setPositiveButton("OK", (dialog, which) -> finish());
+                lock.isChecked() ? passT.getContentText() : "")));
 
-        builder.create();
     }
 
     private void init() {
-        a = this;
+
+        res = new Utilities.Resources(this);
+
         stringHandler = new StringHandler(null);
         Choice<TextInputEditText> choice = getChoice(getIntent());
         code = choice.getProperty();
@@ -179,7 +162,7 @@ public class EditActivity extends AppCompatActivity {
 
         info = findViewById(R.id.textInfo);
         passT = findViewById(R.id.inputPassword);
-        desp = findViewById(R.id.description);
+        desc = findViewById(R.id.description);
         lock = findViewById(R.id.toggle_protect);
         std = findViewById(R.id.standard);
         button = findViewById(R.id.generate);
@@ -212,7 +195,7 @@ public class EditActivity extends AppCompatActivity {
         passT.onRestoreInstanceState(savedInstanceState.getBundle(vPASS));
     }
 
-    private void generate(String s) {
+    private synchronized void generate(String s) {
         int width = res.getDeviceWidth();
         int height = res.getDeviceHeight();
         int smallerDimension = width < height ? width : height;
@@ -230,15 +213,14 @@ public class EditActivity extends AppCompatActivity {
             ImageView myImage = findViewById(R.id.qr_preview);
             DB.I itemDBHandler = new DB.I(this);
             // TODO: 12-08-2017 update this
-            Item item = new Item(0, s, desp.getText(), type, s, 0,
-                    Long.parseLong(DATE_FORMAT2.format(new Date())), b, pass);
-            itemDBHandler.insertItem(item);
+            Item item = new Item(0, s, desc.getText(), type, s, 0,
+                    Long.parseLong(DATE_FORMAT2.format(new Date())), b, lock.isChecked() ? passT.getContentText() : "");
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     "/QRCode/" + item.getImg_ref() + ".jpg");
-            int i = 1;
-            while (file.exists())
-                file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                        "/QRCode/" + item.getImg_ref() + " (" + i++ + ").jpg");
+            if (file.exists())
+                return;
+            itemDBHandler.insertItem(item);
+
             File file1 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "QRCode");
             if (!file1.exists())
                 file1.mkdir();
@@ -246,13 +228,10 @@ public class EditActivity extends AppCompatActivity {
             final File finalFile = file;
             myImage.setOnClickListener(v -> {
                 if (finalFile.isFile()) {
-                    MediaScannerConnection.scanFile(EditActivity.this, new String[]{finalFile.toString()}, null, new MediaScannerConnection.OnScanCompletedListener() {
-                        @Override
-                        public void onScanCompleted(String path, Uri uri) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setDataAndType(uri, "image/*");
-                            startActivity(intent);
-                        }
+                    MediaScannerConnection.scanFile(EditActivity.this, new String[]{finalFile.toString()}, null, (path, uri) -> {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(uri, "image/*");
+                        startActivity(intent);
                     });
                 }
             });
@@ -292,20 +271,25 @@ public class EditActivity extends AppCompatActivity {
             case R.id.collapse:
                 if (animator == null || !animator.isRunning()) {
                     View v = findViewById(R.id.collapse_layout);
-                    v.measure(-1, -2);
                     animateAlpha(tools, collapsed ? 0 : 1, ANIMATION_TIME, DI, collapsed ? 0 : ANIMATION_TIME / 2);
                     animateAlpha(v, collapsed ? Float.MIN_VALUE : 1, ANIMATION_TIME, DI, collapsed ? 0 : ANIMATION_TIME / 2);
-                    d = menu.findItem(R.id.collapse).getIcon();
-                    new Animations.AnimatingParameter(v, 0, v.getMeasuredHeight())
-                            .setDuration(ANIMATION_TIME)
-                            .setDelay(collapsed ? ANIMATION_TIME / 2 : 0)
-                            .animate(collapsed = !collapsed);
+                    v.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                        @Override
+                        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                            v.removeOnLayoutChangeListener(this);
+                            new Animations.AnimatingParameter(v, 0, top - bottom)
+                                    .setDuration(ANIMATION_TIME)
+                                    .setDelay(collapsed ? ANIMATION_TIME / 2 : 0)
+                                    .animate(collapsed = !collapsed);
+                        }
+                    });
                     animator = ObjectAnimator.ofFloat(0f, 90f)
                             .setDuration(ANIMATION_TIME);
                     animator.setInterpolator(DI);
                     if (!collapsed)
                         animator.setFloatValues(0f, -90f);
                     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        Drawable d = menu.findItem(R.id.collapse).getIcon();
                         @Override
                         public void onAnimationUpdate(ValueAnimator animation) {
                             final float angle = (float) animation.getAnimatedValue();
@@ -356,7 +340,12 @@ public class EditActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (data!=null&&!data.isDone()) {
-            builder.show();
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_alert)
+                    .setTitle("Cancel create code?")
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("OK", (dialog, which) -> finish())
+                    .show();
             return true;
         }
         return super.onKeyDown(keyCode, event);

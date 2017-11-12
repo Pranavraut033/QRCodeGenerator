@@ -1,12 +1,10 @@
 package com.preons.pranav.QRCodeGenerator.utils;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.preons.pranav.QRCodeGenerator.Views.DividerItemDecor;
-import com.preons.pranav.QRCodeGenerator.code.Code;
 
 import java.util.ArrayList;
 

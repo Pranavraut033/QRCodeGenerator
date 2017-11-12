@@ -16,12 +16,17 @@ public final class c {
     public static final String TAG = "preons";
     public static final int PERMISSION_CAMERA = 1;
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("ddMMyyhhmm", Locale.ENGLISH);
-    public static final SimpleDateFormat DATE_FORMAT2 = new SimpleDateFormat("mmhhyyMMdd", Locale.ENGLISH);
+    public static final SimpleDateFormat DATE_FORMAT2 = new SimpleDateFormat("ssmmhhyyMMdd", Locale.ENGLISH);
     public static final int IMAGE = 0x53d5;
     // TODO: 15-08-2017 fix interpolator of all activity
     public static final TimeInterpolator DCI = new AccelerateDecelerateInterpolator();
     public static final Interpolator DI = new OvershootInterpolator(1);
     public static final String DSP = "default";
+
+    public synchronized static void setFilter(int i, Drawable... drawables) {
+        for (Drawable drawable : drawables)
+            drawable.setColorFilter(i, PorterDuff.Mode.SRC_ATOP);
+    }
 
     //EDIT ACTIVITY
     public final static class e {
@@ -65,11 +70,6 @@ public final class c {
 
         public static final int[] S_IDS = new int[]{
                 R.drawable.ic_call, R.drawable.ic_msg};
-    }
-
-    public synchronized static void setFilter(int i, Drawable... drawables) {
-        for (Drawable drawable : drawables)
-            drawable.setColorFilter(i, PorterDuff.Mode.SRC_ATOP);
     }
 
 

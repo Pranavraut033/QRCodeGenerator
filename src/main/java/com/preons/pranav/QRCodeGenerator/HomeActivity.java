@@ -15,8 +15,10 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -27,7 +29,6 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.preons.pranav.QRCodeGenerator.Views.DividerItemDecor;
@@ -38,6 +39,7 @@ import com.preons.pranav.QRCodeGenerator.utils.Item;
 import com.preons.pranav.QRCodeGenerator.utils.UpdateDialog;
 import com.preons.pranav.QRCodeGenerator.utils.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import pranav.utilities.Animations;
@@ -46,6 +48,7 @@ import pranav.utilities.Task;
 import pranav.utilities.Utilities;
 import pranav.views.FloatingMenu.FMGroupHelper;
 import pranav.views.FloatingMenu.FloatingMenu;
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 import static com.preons.pranav.QRCodeGenerator.utils.Utils.initRec;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DCI;
@@ -58,11 +61,13 @@ import static pranav.utilities.Utilities.Resources.getColoredDrawable;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //private static final String TAG = "preons";
+
     private boolean multiOn = false;
     private int iniTop, i = -1, j = 0x90000000, k = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 0xCCFFFFFF : 0x90000000,
             primaryColor, primaryColorDark;
     private float lastH = 0, f = 0, H;
-    Buffer<Float> floatBuffer = new Buffer<Float>() {
+    private Buffer<Float> floatBuffer = new Buffer<Float>() {
         @Override
         public void execute(Float f) {
             System.out.println(f);
@@ -157,13 +162,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         prepare();
+        if (!sharedPreferences.getString("done", "").equals("ok"))
+            new MaterialTapTargetPrompt.Builder(this)
+                    .setTarget(floatingMenu.getMainBtn())
+                    .setPrimaryText("Let's get started")
+                    .setSecondaryText("Tap the \"Plus\" button to create first Barcode or QR-Code")
+                    .setPromptStateChangeListener((prompt, state) -> {
+                        if (state == MaterialTapTargetPrompt.STATE_DISMISSED) {
+                            SharedPreferences.Editor edit = sharedPreferences.edit();
+                            edit.putString("done", "ok");
+                            edit.apply();
+                        }
+                        if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                            floatingMenu.getMainBtn().setOnClickListener(null);
+                            startActivity(new Intent(this, ChoiceActivity.class));
+                            floatingMenu.getMainBtn().setOnClickListener(floatingMenu.mainBtnListener);
+                        }
+                    })
+                    .show();
     }
 
     @Override
@@ -176,7 +198,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         searchView = (SearchView) searchMenuItem.getActionView();
         ((ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn))
                 .setColorFilter(0x90000000, PorterDuff.Mode.SRC_ATOP);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             searchView.setBackground(getColoredDrawable(res.getPx(5),
                     -1, (int) res.getPx(10)));
@@ -226,27 +247,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete:
-                RelativeLayout layout = findViewById(R.id.ref_layout);
-                snackbar = Snackbar.make(layout, adapter.getSelectionCount() + " Items Deleted",
-                        Snackbar.LENGTH_LONG);
-                snackbar.setAction("UNDO", this);
-                View v = snackbar.getView();
-                v.setBackgroundColor(-1);
-                System.out.println(v);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) v.setElevation(res.getPx(8));
-                ((TextView) v.findViewById(android.support.design.R.id.snackbar_text)).setTextColor(0x90000000);
-                floatingMenu.liftFor(res.getDimen(R.dimen.pad36dp), 2800);
-                v.setVisibility(View.INVISIBLE);
-                snackbar.show();
-                v.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                    @Override
-                    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                        v.removeOnLayoutChangeListener(this);
-                        v.setTranslationY(v.getHeight());
-                        v.setVisibility(View.VISIBLE);
-                        v.animate().translationY(0).setDuration(ANIMATION_TIME).setInterpolator(DI);
-                    }
-                });
                 delete();
                 return true;
             case R.id.search:
@@ -270,11 +270,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             case R.id.toggle_selection:
                 if (adapter.getSelectionCount() < data.size()) {
-                    adapter.selectAll(true);
+                    adapter.selectMode(true);
                     item.setIcon(res.getDrawable(R.drawable.ic_select_none));
                     item.setTitle(R.string.select_none);
                 } else {
-                    adapter.selectAll(false);
+                    adapter.selectMode(false);
                     item.setIcon(res.getDrawable(R.drawable.ic_select_all));
                     item.setTitle(R.string.select_all);
                 }
@@ -383,7 +383,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(int position) {
                 startActivity(new Intent(HomeActivity.this, PreviewActivity.class));
-                //TODO: Link next activity
             }
 
             @Override
@@ -394,10 +393,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     if (multiOn) a();
                     else b();
                 }
-                //MenuItem i = menu.findItem(R.id.toggle_selection);
-                //i.setIcon(res.getDrawable(count == data.size() ?
-                //        R.drawable.ic_select_none : R.drawable.ic_select_all));
-                //i.setTitle(count == data.size() ? R.string.select_none : R.string.select_all);
+                MenuItem i = menu.findItem(R.id.toggle_selection);
+                i.setIcon(res.getDrawable(count == data.size() ?
+                        R.drawable.ic_select_none : R.drawable.ic_select_all));
+                i.setTitle(count == data.size() ? R.string.select_none : R.string.select_all);
                 nav.setIndicatorEnable(!multiOn);
                 if (multiOn) toolbar.setTitle(count + " Item(s) Selected");
             }
@@ -416,8 +415,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void a() {
         floatBuffer.removeTasks(apply);
-        //menu.findItem(R.id.toggle_selection).setIcon(res.getDrawable(R.drawable.ic_select_all));
-        for (int i : new int[]{R.id.search,})//R.id.toggle_selection})
+        menu.findItem(R.id.toggle_selection).setIcon(res.getDrawable(R.drawable.ic_select_all));
+        for (int i : new int[]{R.id.search, R.id.toggle_selection})
             menu.findItem(i).setVisible(i != R.id.search);
         valueAnimator.setObjectValues(0f, 1f);
         valueAnimator.start();
@@ -426,7 +425,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void b() {
         floatBuffer.addTasks(apply);
-        for (int i : new int[]{R.id.search,})//R.id.toggle_selection})
+        for (int i : new int[]{R.id.search, R.id.toggle_selection})
             menu.findItem(i).setVisible(i == R.id.search);
         valueAnimator.setObjectValues(1f, 0f);
         valueAnimator.start();
@@ -454,15 +453,51 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void delete() {
-        ArrayList<Integer> checkItems = adapter.getCheckedItemIndices();
-        ArrayList<Item> temp = new ArrayList<>();
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Images!")
+                .setMessage("Do you want the application to delete created image as well?\nDelete action cannot be UNDONE")
+                .setIcon(R.drawable.ic_alert)
+                .setNegativeButton("NO", (dialog, which) -> delete(false))
+                .setPositiveButton("DELETE", (dialog, which) -> delete(true))
+                .show();
+    }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void delete(boolean b) {
+        ArrayList<Integer> checkItems = adapter.getCheckedItemIndices();
+        adapter.clearSelection();
+        ArrayList<Item> temp = new ArrayList<>();
         for (int i : checkItems) {
             Item it = items.get(i);
+            File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    "/QRCode/" + it.getImg_ref() + ".jpg");
+            if (f.exists() && b) f.delete();
             temp.add(it);
             handler.deleteItem(handler.getID(it.getIndex()));
-            //TODO: delete Image
         }
+        snackbar = Snackbar.make(findViewById(R.id.ref_layout), checkItems.size() + " Items Deleted",
+                Snackbar.LENGTH_LONG);
+        if (!b)
+            snackbar.setAction("UNDO", this);
+        View v = snackbar.getView();
+        v.setBackgroundColor(-1);
+        System.out.println(v);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            v.setElevation(res.getPx(8));
+        ((TextView) v.findViewById(android.support.design.R.id.snackbar_text)).setTextColor(0x90000000);
+        floatingMenu.liftFor(res.getDimen(R.dimen.pad36dp), 2800);
+        v.setVisibility(View.INVISIBLE);
+        snackbar.show();
+        v.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                v.removeOnLayoutChangeListener(this);
+                v.setTranslationY(v.getHeight());
+                v.setVisibility(View.VISIBLE);
+                v.animate().translationY(0).setDuration(ANIMATION_TIME).setInterpolator(DI);
+            }
+        });
+
         restore.clear();
         restore.addAll(items);
         items.removeAll(temp);
@@ -472,7 +507,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void refresh() {
-        recyclerView.setAdapter(adapter);
+        //recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 }
