@@ -72,6 +72,7 @@ public class ChoiceViewHolderAdapter extends RecyclerView.Adapter<ChoiceViewHold
                 if (onClick != null) onClick.onSingleClick(holder.getAdapterPosition());
             }
         };
+        holder.getParent().setContentDescription(String.valueOf(position));
         holder.getParent().setOnClickListener(v -> doubleClick.click());
         holder.getParent().setOnLongClickListener(v -> toggle(holder));
     }

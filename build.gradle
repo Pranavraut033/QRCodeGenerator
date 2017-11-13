@@ -3,6 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
+            keyAlias 'key0'
+            keyPassword 'physicist033'
+            storeFile file('P:/WORK/Keys/QR_Code_generator.jks')
+            storePassword 'preonsPranavRaut033!P'
         }
     }
     compileSdkVersion 26
@@ -11,15 +15,20 @@ android {
         applicationId "com.college.project.qrcodeprotection"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -31,7 +40,9 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-messaging:11.4.2'
+    implementation 'com.google.firebase:firebase-messaging:11.6.0'
+    implementation 'com.google.firebase:firebase-invites:11.6.0'
+    implementation 'com.google.firebase:firebase-core:11.6.0'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -39,15 +50,16 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:design:26.1.0'
     compile 'me.dm7.barcodescanner:zxing:1.9.3'
-    compile 'com.google.firebase:firebase-storage:11.4.2'
-    compile 'com.google.firebase:firebase-auth:11.4.2'
-    compile 'com.google.firebase:firebase-crash:11.4.2'
+    compile 'com.google.firebase:firebase-storage:11.6.0'
+    compile 'com.google.firebase:firebase-auth:11.6.0'
+    compile 'com.google.firebase:firebase-crash:11.6.0'
     compile 'com.android.support:cardview-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:support-v4:26.1.0'
     compile 'org.jetbrains:annotations-java5:15.0'
     compile 'com.github.mancj:SlideUp-Android:2.2.5'
     compile 'uk.co.samuelwall:material-tap-target-prompt:2.4.0'
+    compile 'org.sufficientlysecure:donations:2.5'
     testCompile 'junit:junit:4.12'
 }
 

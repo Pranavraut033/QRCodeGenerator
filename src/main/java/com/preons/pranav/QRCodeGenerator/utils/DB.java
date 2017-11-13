@@ -220,6 +220,7 @@ public class DB {
     }
 
     public static class I extends DataBaseHelper<Item> {
+        public static final SQLiteQuery QUERY;
         private static final String INDEX_COLUMN = "dex";
         private static final String TITLE_COLUMN = "title";
         private static final String DISP_COLUMN = "disp";
@@ -231,7 +232,6 @@ public class DB {
         private static final String PROTECT_COLUMN = "isProtect";
         private static final String PASSWORD_COLUMN = "password";
         private static final String LABEL_COLUMN = "label";
-        public static final SQLiteQuery QUERY;
         private static final String DEFAULT_NAME = "QRG_";
 
         private static final String TABLE_NAME = "Item";
@@ -251,24 +251,24 @@ public class DB {
             QUERY.addCol(LABEL_COLUMN, "TEXT");
         }
 
-        public int getID(Object object) {
-            return super.getID(INDEX_COLUMN, object);
-        }
-
-
         public I(Context context) {
             super(context, QUERY);
         }
 
         @NonNull
-        public static String getName(long date, int type, boolean isProtect) {
+        public static String getName(Item item) {
             StringBuilder builder = new StringBuilder(50);
             builder.append(DEFAULT_NAME);
-            if (isProtect)
+            if (item.isProtected)
                 builder.append("SECURE_");
-            builder.append(date).append("_")
-                    .append(Code.Types.values()[type].name());
+            builder.append(item.dateL).append('_')
+                    .append(Code.Types.values()[item.type].name()).append('_')
+                    .append(item.title.length() > 4 ? item.title.substring(0, 4) : item.title);
             return builder.toString();
+        }
+
+        public int getID(Object object) {
+            return super.getID(INDEX_COLUMN, object);
         }
 
         @NonNull

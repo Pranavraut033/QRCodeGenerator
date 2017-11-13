@@ -2,12 +2,14 @@ package com.preons.pranav.QRCodeGenerator.utils;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.preons.pranav.QRCodeGenerator.code.Code;
 
 import java.util.Comparator;
 
 import static com.preons.pranav.QRCodeGenerator.utils.DB.I.getName;
+import static pranav.utilities.Log.TAG;
 
 
 /**
@@ -16,23 +18,23 @@ import static com.preons.pranav.QRCodeGenerator.utils.DB.I.getName;
  */
 
 public class Item implements Comparator<Item> {
-    private final String title;
+    final String title;
+    final boolean isProtected;
+    final long dateL;
+    final int type;
     private final String typeS;
     private final String disp;
     private final String date;
-    private final boolean isProtected;
-    private final long dateL;
-    private final int type;
-    private final int index;
+    private final long index;
     private String img_ref;
     private int subtype;
     private String data;
     private int extra_ref;
     private String password;
-    private boolean isSelected;
 
-    public Item(int index, String title, String disp, int type, String data,
+    public Item(long index, String title, String disp, int type, String data,
                 int extra_ref, long date, boolean isProtected, String password) {
+        Log.d(TAG, "Item() called with: index = [" + index + "], title = [" + title + "], disp = [" + disp + "], type = [" + type + "], data = [" + data + "], extra_ref = [" + extra_ref + "], date = [" + date + "], isProtected = [" + isProtected + "], password = [" + password + "]");
         this.title = title;
         this.index = index;
         this.disp = disp;
@@ -44,7 +46,7 @@ public class Item implements Comparator<Item> {
         this.data = data;
         this.extra_ref = extra_ref;
         this.password = password;
-        this.img_ref = getName(date, type, isProtected) + title.substring(0, 3);
+        this.img_ref = getName(this);
     }
 
     @NonNull
@@ -84,7 +86,7 @@ public class Item implements Comparator<Item> {
         return type;
     }
 
-    public int getIndex() {
+    public long getIndex() {
         return index;
     }
 
@@ -106,10 +108,6 @@ public class Item implements Comparator<Item> {
 
     public String getImg_ref() {
         return img_ref;
-    }
-
-    public void setImg_ref(String img_ref) {
-        this.img_ref = img_ref;
     }
 
     public int getSubtype() {
@@ -142,13 +140,4 @@ public class Item implements Comparator<Item> {
     public int compare(Item o1, Item o2) {
         return o1.title.toLowerCase().compareTo(o2.title.toLowerCase());
     }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
 }

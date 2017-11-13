@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -61,6 +62,7 @@ import static com.preons.pranav.QRCodeGenerator.ExtraActivity.INFOS;
 import static com.preons.pranav.QRCodeGenerator.utils.Choice.getChoice;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DATE_FORMAT2;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DI;
+import static com.preons.pranav.QRCodeGenerator.utils.c.LOG;
 import static com.preons.pranav.QRCodeGenerator.utils.c.PERMISSION_CAMERA;
 import static com.preons.pranav.QRCodeGenerator.utils.c.e.BUFFER_SIZE;
 import static com.preons.pranav.QRCodeGenerator.utils.c.e.vINFO;
@@ -211,15 +213,20 @@ public class EditActivity extends AppCompatActivity {
         try {
             Bitmap bitmap = encoder.encodeAsBitmap();
             ImageView myImage = findViewById(R.id.qr_preview);
-            DB.I itemDBHandler = new DB.I(this);
+            DB.I handler = new DB.I(this);
             // TODO: 12-08-2017 update this
-            Item item = new Item(0, s, desc.getText(), type, s, 0,
+            SharedPreferences sharedPreferences = getSharedPreferences(LOG, 0);
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            long l = sharedPreferences.getLong("index", 0);
+            Item item = new Item(l, s, desc.getText(), type, s, 0,
                     Long.parseLong(DATE_FORMAT2.format(new Date())), b, lock.isChecked() ? passT.getContentText() : "");
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                     "/QRCode/" + item.getImg_ref() + ".jpg");
+            edit.putLong("index", ++l);
+            edit.apply();
             if (file.exists())
                 return;
-            itemDBHandler.insertItem(item);
+            handler.insertItem(item);
 
             File file1 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "QRCode");
             if (!file1.exists())

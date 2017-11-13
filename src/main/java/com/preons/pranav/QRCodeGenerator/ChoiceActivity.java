@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -32,9 +33,10 @@ import static pranav.utilities.Animations.ANIMATION_TIME;
 import static pranav.utilities.Utilities.isFinite;
 
 public class ChoiceActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final String TAG = "preons";
     private Choice c;
     private int i = 0, H;
-    private float mul = 4, lH;
+    private float lH = 0f;
     private Context context;
     private ArrayList<Choice> choices = new ArrayList<>();
     private ChoiceViewHolderAdapter holderAdapter = new ChoiceViewHolderAdapter(choices);
@@ -45,7 +47,7 @@ public class ChoiceActivity extends AppCompatActivity implements View.OnClickLis
     private SlideUp slideUp;
     private Background background;
     private ArrayList<Choice> subTypes = new ArrayList<>();
-    public static final String TAG = "preons";
+    private int iniT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +63,19 @@ public class ChoiceActivity extends AppCompatActivity implements View.OnClickLis
         init();
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            float mul = 3;
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                i += dy;
-                if (i > 360)
-                    recyclerView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-                else
-                    recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    if (i <= mul * H) appBarLayout.setElevation(lH = i / mul);
-                    else if (i > mul * H) appBarLayout.setElevation(lH = H);
+                if (recyclerView.getChildAt(0).getContentDescription().equals("0")) {
+                    int y = iniT - recyclerView.getChildAt(0).getTop();
+                    if (y < 0) y = 0;
+                    Log.d(TAG, "onScrolled: " + y);
+                    recyclerView.setOverScrollMode(y > 360 ? View.OVER_SCROLL_IF_CONTENT_SCROLLS : View.OVER_SCROLL_NEVER);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                        if (y <= mul * H) appBarLayout.setElevation(lH = y / mul);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && appBarLayout.getElevation() != H)
+                    appBarLayout.setElevation(H);
             }
         });
 
@@ -169,7 +173,7 @@ public class ChoiceActivity extends AppCompatActivity implements View.OnClickLis
         c = new Choice(context);
 
         res = new Utilities.Resources(context);
-        H = (int) res.getDimen(R.dimen.dPad);
+        H = (int) res.getDimen(R.dimen.action_bar_elevation);
 
         appBarLayout = findViewById(R.id.app_bar_layout);
         background = ((Background) findViewById(R.id.back)).setState(GONE);
@@ -201,7 +205,7 @@ public class ChoiceActivity extends AppCompatActivity implements View.OnClickLis
                         if (run) {
                             background.animateTo(l = (visibility == VISIBLE ? 100 : 0));
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                                appBarLayout.animate().z(1 * lH)
+                                appBarLayout.animate().z((1 - l / 100) * lH)
                                         .setInterpolator(DI).setDuration(ANIMATION_TIME);
                         }
                         if (l != 0 && l != 100) {
@@ -227,6 +231,7 @@ public class ChoiceActivity extends AppCompatActivity implements View.OnClickLis
                 res.getDimen(R.dimen.activity_horizontal_margin)), recyclerView2, recyclerView);
 
         prepare();
+        iniT = recyclerView.getTop();
     }
 
     @Override

@@ -22,6 +22,7 @@ public final class c {
     public static final TimeInterpolator DCI = new AccelerateDecelerateInterpolator();
     public static final Interpolator DI = new OvershootInterpolator(1);
     public static final String DSP = "default";
+    public static final String LOG = "logging";
 
     public synchronized static void setFilter(int i, Drawable... drawables) {
         for (Drawable drawable : drawables)

@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,10 +22,16 @@ import static com.preons.pranav.QRCodeGenerator.utils.c.DATE_FORMAT;
  * For QRCodeProtection
  */
 
-public class CFileHelper {
+public class CFileHelper extends FileProvider {
+    @Nullable
     private Context c;
 
-    public CFileHelper(Context c) {
+    public CFileHelper() {
+        this(null);
+    }
+
+    public CFileHelper(@Nullable Context c) {
+        super();
         this.c = c;
     }
 
@@ -50,10 +58,24 @@ public class CFileHelper {
         return temp;
     }
 
+    public static void copyFile(File originalApk, File tempFile) throws IOException {
+        InputStream in = new FileInputStream(originalApk);
+        OutputStream out = new FileOutputStream(tempFile);
+
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+
+        in.close();
+        out.close();
+    }
+
     public void scanMedia(File file) {
         Intent intent =
                 new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         intent.setData(Uri.fromFile(file));
-        c.sendBroadcast(intent);
+        if (c != null) c.sendBroadcast(intent);
     }
 }

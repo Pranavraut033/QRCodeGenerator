@@ -122,4 +122,8 @@
     <string name="stored_at">Stored At:</string>
     <string name="code_preview">Code Preview:</string>
     <string name="std_info">Standard Information</string>
+    <string name="link">Invite</string>
+    <string name="apk_file">APK file</string>
+    <string name="invitation_title">Try out the app called "Barcode Generator"</string>
+    <string name="invitation_message">Barcode Generator let you generate encrypted QR-code and various other Bar-codes</string>
 </resources>

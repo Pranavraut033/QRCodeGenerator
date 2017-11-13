@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,9 @@ import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.preons.pranav.QRCodeGenerator.Views.DividerItemDecor;
 import com.preons.pranav.QRCodeGenerator.Views.ItemViewHolderAdapter;
 import com.preons.pranav.QRCodeGenerator.utils.DB;
@@ -54,15 +57,16 @@ import static com.preons.pranav.QRCodeGenerator.utils.Utils.initRec;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DCI;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DI;
 import static com.preons.pranav.QRCodeGenerator.utils.c.DSP;
+import static com.preons.pranav.QRCodeGenerator.utils.c.TAG;
 import static com.preons.pranav.QRCodeGenerator.utils.c.setFilter;
 import static pranav.utilities.Animations.ANIMATION_TIME;
 import static pranav.utilities.Animations.AnimatingParameter.ANIMATE_WIDTH;
 import static pranav.utilities.Utilities.Resources.getColoredDrawable;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final int REQUEST_INVITE = 123;
 
     //private static final String TAG = "preons";
-
     private boolean multiOn = false;
     private int iniTop, i = -1, j = 0x90000000, k = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 0xCCFFFFFF : 0x90000000,
             primaryColor, primaryColorDark;
@@ -168,6 +172,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         prepare();
+
         if (!sharedPreferences.getString("done", "").equals("ok"))
             new MaterialTapTargetPrompt.Builder(this)
                     .setTarget(floatingMenu.getMainBtn())
@@ -306,6 +311,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                SharedPreferences sharedPreferences = getSharedPreferences("logging", 0);
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putInt("invites", sharedPreferences.getInt("invites", 0) + ids.length);
+                for (String id : ids) {
+                    Log.d(TAG, "onActivityResult: sent invitation " + id);
+                }
+                edit.apply();
+            } else {
+                Toast.makeText(this, "OK... May be Later", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
+
     private void init() {
         res = new Utilities.Resources(c = this);
         H = (int) res.getDimen(R.dimen.action_bar_elevation);
@@ -323,7 +348,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         floatingMenu = findViewById(R.id.menu);
 
         sharedPreferences = getSharedPreferences(DSP, 0);
-        nav = new InitNav(c, toolbar, sharedPreferences);
+        nav = new InitNav(this, toolbar, sharedPreferences, false);
 
         ImageView ref_iv = findViewById(R.id.back_key);
         parameter = new Animations.AnimatingParameter(ref_iv,
@@ -378,6 +403,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 floatingMenu.getDetails().setAnimatedStatusBar(false).setListeners(v -> startActivity(new Intent(c, ChoiceActivity.class)),
                         v -> startActivity(new Intent(c, ScannerActivity.class))), null).setDividerVisible(false));
 
+        adapter.setItems(items);
         adapter.setClick(new ItemViewHolderAdapter.OnClick() {
 
             @Override
@@ -448,17 +474,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         data.clear();
         items.addAll(handler.getEverything());
         data.addAll(items);
-        adapter.setItems(items);
         refresh();
     }
 
     private void delete() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Images!")
+                .setCancelable(false)
                 .setMessage("Do you want the application to delete created image as well?\nDelete action cannot be UNDONE")
                 .setIcon(R.drawable.ic_alert)
                 .setNegativeButton("NO", (dialog, which) -> delete(false))
                 .setPositiveButton("DELETE", (dialog, which) -> delete(true))
+                .setNeutralButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
